@@ -28,20 +28,30 @@ public class MyLinkedList<E> implements MyList<E> {
 	}
 
 	public MyLinkedList() {
-		firstNode = new Node<E>(null, null, null);
-		lastNode = new Node<E>(null, firstNode, null);
-		firstNode.next = lastNode;
-		size = 0;
 	}
 
+	
 	@Override
 	public boolean add(E e) {
-		return add(size, e);
+		if (firstNode == null) {
+			firstNode = new Node<E>(e, null, null);
+			lastNode = firstNode;
+		} else {
+			Node<E> node = new Node<E>(e,lastNode,null);
+			lastNode.next = node;
+			lastNode = node;
+		}
+		size++;
+		return true;
 	}
 
 	@Override
 	public boolean add(int index, E e) {
-		return addBefore(getNode(index), e);
+		Node<E> node = getNode(index);
+		if (node == firstNode) {
+			return addFirst(e);
+		}
+		return addBefore(node, e);
 	}
 
 	@Override
@@ -59,9 +69,39 @@ public class MyLinkedList<E> implements MyList<E> {
 
 	@Override
 	public E remove(int index) {
-		return remove(getNode(index));
+		Node<E> node = getNode(index);
+		if (node == firstNode) {
+			return removeFirst();
+		} else if (node == lastNode) {
+			return removeLast();
+		}
+		return remove(node);
 	}
 
+	public boolean addFirst(E e) {
+		Node<E> node = new Node<E>(e, null, firstNode);
+		firstNode.prev = node;
+		firstNode = node;
+		size++;
+		return true;
+	}
+	
+	public E removeFirst() {
+		if (firstNode == null)
+			throw new IllegalAccessError("头节点为空");
+		E ret = firstNode.ele;
+		firstNode = firstNode.next;
+		size--;
+		return ret;
+	}
+	
+	public E removeLast() {
+		E ret = lastNode.ele;
+		lastNode = lastNode.prev;
+		size--;
+		return ret;
+	}
+	
 	/**
 	 * 在指定节点前加入节点
 	 * 
@@ -90,7 +130,7 @@ public class MyLinkedList<E> implements MyList<E> {
 	 * @return
 	 */
 	private Node<E> getNode(int index) {
-		if (index < 0 || index > size)
+		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException();
 		Node<E> node;
 		if (index < size / 2) {
@@ -100,7 +140,7 @@ public class MyLinkedList<E> implements MyList<E> {
 			}
 		} else {
 			node = lastNode;
-			for (int i = size; i > index; i--) {
+			for (int i = size - 1; i > index; i--) {
 				node = node.prev;
 			}
 		}
@@ -133,11 +173,11 @@ public class MyLinkedList<E> implements MyList<E> {
 
 	private class MyLinkedListIterator implements Iterator<E> {
 
-		private Node<E> current = firstNode.next;
+		private Node<E> current = firstNode;
 
 		@Override
 		public boolean hasNext() {
-			return current != lastNode;
+			return current != lastNode.next;
 		}
 
 		@Override

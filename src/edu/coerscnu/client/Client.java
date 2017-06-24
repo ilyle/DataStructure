@@ -2,17 +2,20 @@ package edu.coerscnu.client;
 
 import edu.coerscnu.basic.Iterator;
 import edu.coerscnu.basic.list.LinkedList.MyLinkedList;
-import edu.coerscnu.basic.stack.MyStack;
 
 public class Client {
 
 	public static void main(String[] args) {
-		MyStack<String> myStack = new MyStack<>();
+		MyLinkedList<Integer> linkedList = new MyLinkedList<>();
 		for (int i = 0; i < 6; i++) {
-			myStack.push("a" + i);
+			linkedList.add(i);
 		}
-		while (!myStack.isEmpty()) {
-			System.out.println(myStack.pop());
+		linkedList.add(3, 666);
+		linkedList.remove(linkedList.size() - 1);
+		Iterator<Integer> it = linkedList.iterator();
+		while (it.hasNext()) {
+			System.out.println(it.next());
 		}
+		System.out.println("first = " + linkedList.get(0));
 	}
 }
